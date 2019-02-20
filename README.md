@@ -46,3 +46,7 @@ sudo cpupower frequency-set --governor performance
 ./mybench
 sudo cpupower frequency-set --governor powersave
 ```
+
+### Run performance analyses
+
+Apply `./vtune.patch` to eliminate the benchmark noise when analysing the performance
