@@ -11,11 +11,11 @@
 
 using namespace std;
 
-static void test(benchmark::State& state) {
-  // Get Args
+static void task(benchmark::State& state) {
+  // Parse args
   auto length = state.range(0);
 
-  // Sets up intel SEA:
+  // Sets up intel SEAPI:
   static auto domain = __itt_domain_create("main");
   __itt_resume();
   char taskname[64];
@@ -23,15 +23,34 @@ static void test(benchmark::State& state) {
   auto task = __itt_string_handle_create(taskname);
   __itt_task_begin(domain, __itt_null, __itt_null, task);
 
-  int test = length;
+  // Original task
   for (auto _ : state) {
-    if (test == 0) {
-      test = (test + 1) % 10;
+    state.PauseTiming();
+    int NUM = length;
+    static char flags[8192 + 1];
+    long i, k;
+    int count = 0;
+    state.ResumeTiming();
+    while (NUM--) {
+      count = 0;
+      for (i = 2; i <= 8192; i++) {
+        flags[i] = 1;
+      }
+      for (i = 2; i <= 8192; i++) {
+        if (flags[i]) {
+          /* remove all multiples of prime: i */
+          for (k = i + i; k <= 8192; k += i) {
+            flags[k] = 0;
+          }
+          count++;
+        }
+      }
     }
+    state.PauseTiming();
+    assert(count == 1028);
+    state.ResumeTiming();
   }
 
-  assert(test == 1);
-  benchmark::DoNotOptimize(test);
   __itt_task_end(domain);
   __itt_pause();
 }
@@ -62,6 +81,6 @@ void original() {
   assert(count == 1028);
 }
 
-BENCHMARK(test)->Arg(0)->Arg(1);
+BENCHMARK(task)->Arg(170)->Arg(1700)->Arg(17000);
 
 BENCHMARK_MAIN();
