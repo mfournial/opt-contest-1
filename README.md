@@ -49,4 +49,21 @@ sudo cpupower frequency-set --governor powersave
 
 ### Run performance analyses
 
-Apply `./vtune.patch` to eliminate the benchmark noise when analysing the performance
+Apply [this patch](./vtune.patch) to eliminate the benchmark noise when analysing the performance
+
+## Results
+
+### Before
+
+![original](./original.png)
+![original-improved](./original-rel.png)
+
+### After
+
+* With OR and predication:
+
+![my-results](./after.png)
+
+* With multiplication and predication (*first commit I think included there just for completeness*):
+
+![reimplementation](./reimplementation.png)
