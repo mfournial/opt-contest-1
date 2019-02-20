@@ -27,7 +27,7 @@ static void task(benchmark::State& state) {
   for (auto _ : state) {
     state.PauseTiming();
     int NUM = length;
-    static char flags[8192 + 1];
+    char flags[8192 + 1];
     long i, k;
     int count = 0;
     state.ResumeTiming();
@@ -37,13 +37,14 @@ static void task(benchmark::State& state) {
         flags[i] = 1;
       }
       for (i = 2; i <= 8192; i++) {
-        if (flags[i]) {
+        bool res = bool(flags[i]);
+        //if (flags[i]) {
           /* remove all multiples of prime: i */
           for (k = i + i; k <= 8192; k += i) {
-            flags[k] = 0;
+            flags[k] = flags[k] * (!res);
           }
-          count++;
-        }
+          count = count + res;
+          //}
       }
     }
     state.PauseTiming();
