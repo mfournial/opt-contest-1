@@ -11,7 +11,7 @@
 
 using namespace std;
 
-static void task(benchmark::State& state) {
+static void task(benchmark::State &state) {
   // Parse args
   auto length = state.range(0);
 
@@ -37,14 +37,12 @@ static void task(benchmark::State& state) {
         flags[i] = 1;
       }
       for (i = 2; i <= 8192; i++) {
-        bool res = bool(flags[i]);
-        //if (flags[i]) {
-          /* remove all multiples of prime: i */
-          for (k = i + i; k <= 8192; k += i) {
-            flags[k] = flags[k] * (!res);
-          }
-          count = count + res;
-          //}
+        bool res = !bool(flags[i]);
+        /* remove all multiples of prime: i */
+        for (k = i + i; k <= 8192; k += i) {
+          flags[k] = flags[k] & res;
+        }
+        count = count + (!res);
       }
     }
     state.PauseTiming();
